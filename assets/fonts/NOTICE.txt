@@ -1,0 +1,8 @@
+Font software bundled with Exhibit 78:
+
+- Newsreader, Copyright 2020 The Newsreader Project Authors (github.com/productiontype/newsreader)
+- Inter, Copyright 2020 The Inter Project Authors (github.com/rsms/inter)
+- IBM Plex Mono, Copyright 2017 IBM Corp.
+
+These fonts are licensed under the SIL Open Font License, Version 1.1.
+The license text is in OFL.txt in this directory.
