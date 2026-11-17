@@ -65,6 +65,7 @@
 :root {
   --paper: #f4f0e6;
   --paper-2: #e7e1d4;
+  --paper-3: #d4c6ae;
   --ink: #1a1814;
   --muted: #5e584f;
   --placeholder: #6f6a62;
@@ -480,7 +481,11 @@ h1 {
 }
 
 .orient button[aria-selected="true"] {
-  background: var(--paper-2);
+  background: var(--paper-3);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
 }
 
 .reading {

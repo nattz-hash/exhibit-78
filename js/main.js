@@ -133,7 +133,22 @@ function restoreFocus(focus) {
   }
 }
 
-function render({ scroll = "keep", partial = false } = {}) {
+function announce(message) {
+  const status = document.getElementById("status");
+  if (!status) return;
+  status.textContent = "";
+  window.requestAnimationFrame(() => {
+    status.textContent = message;
+  });
+}
+
+function spreadAnnouncement(spread) {
+  return spread
+    .map((entry) => `${entry.position}: ${entry.card.name}, ${entry.reversed ? "reversed" : "upright"}`)
+    .join(". ");
+}
+
+function render({ scroll = "keep", partial = false, focus = null } = {}) {
   const route = state.route;
   const card = route.name === "card" ? getCard(route.id) : null;
   document.title = pageTitle(route, card);
@@ -173,6 +188,8 @@ function render({ scroll = "keep", partial = false } = {}) {
     saveLibrary();
     revealActiveFilter();
   }
+  if (focus === "draw") document.getElementById("draw-spread")?.focus();
+  else if (focus === "content") document.getElementById("content")?.focus();
 }
 
 function setFace(face) {
@@ -202,7 +219,17 @@ function onRouteChange() {
   }
   state.route = parseHash();
   const backToLibrary = state.route.name === "library" && prev.name === "card";
-  render({ scroll: backToLibrary ? "memory" : "top" });
+  render({ scroll: backToLibrary ? "memory" : "top", focus: "content" });
+  const heading = document.querySelector("#content h1");
+  if (state.route.name === "daily") {
+    const name = document.querySelector(".daily-name");
+    const face = document.querySelector(".face");
+    announce(
+      [heading?.textContent, name?.textContent, face?.textContent].filter(Boolean).join(". ")
+    );
+  } else if (heading) {
+    announce(heading.textContent);
+  }
 }
 
 document.addEventListener("click", (event) => {
@@ -226,7 +253,8 @@ document.addEventListener("click", (event) => {
   if (action && action.dataset.action === "draw-spread") {
     state.spread = dealSpread(cards, `${Date.now()}-${Math.random()}`);
     saveSpread(state.spread);
-    render({ scroll: "keep" });
+    render({ scroll: "keep", focus: "draw" });
+    announce(`Three cards dealt. ${spreadAnnouncement(state.spread)}`);
     return;
   }
 
@@ -239,13 +267,20 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (state.route.name !== "card") return;
-  if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
   if (!event.target.closest(".orient")) return;
+  let next = null;
+  if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+    next = state.route.face === "upright" ? "reversed" : "upright";
+  } else if (event.key === "Home") {
+    next = "upright";
+  } else if (event.key === "End") {
+    next = "reversed";
+  } else {
+    return;
+  }
   event.preventDefault();
-  const next = state.route.face === "upright" ? "reversed" : "upright";
   setFace(next);
-  const tab = document.getElementById(`tab-${next}`);
-  if (tab) tab.focus();
+  document.getElementById(`tab-${next}`)?.focus();
 });
 
 document.addEventListener("input", (event) => {

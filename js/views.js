@@ -188,7 +188,7 @@ export function spreadsView(spread) {
       <h1 class="page-title">Spreads</h1>
       <p class="lede">Past, present, future. Three cards. Make the case.</p>
       <div class="spread">${slots}</div>
-      <button type="button" class="btn" data-action="draw-spread">${dealt ? "Draw again" : "Lay three cards"}</button>
+      <button type="button" class="btn" id="draw-spread" data-action="draw-spread">${dealt ? "Draw again" : "Lay three cards"}</button>
     </main>
   </div>
   ${nav("spreads")}`;
